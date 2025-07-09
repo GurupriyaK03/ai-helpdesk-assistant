@@ -1,0 +1,26 @@
+[
+  {
+    "from": "priya",
+    "role": "employee",
+    "text": "Leave approval for 2 day is not good",
+    "time": "2025-07-07 11:20"
+  },
+  {
+    "from": "priya",
+    "role": "employee",
+    "text": "working hours can be reduced for 7 hours",
+    "time": "2025-07-07 11:35"
+  },
+  {
+    "from": "guru",
+    "role": "employee",
+    "text": "starting time can be from 10am",
+    "time": "2025-07-07 11:36"
+  },
+  {
+    "from": "priya",
+    "role": "employee",
+    "text": "Change the leave policy",
+    "time": "2025-07-08 10:42"
+  }
+]

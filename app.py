@@ -298,7 +298,10 @@ if selected_page == "Assistant":
 
             # Search all index files (e.g. hr_policy1.index, manager_rules.index)
             index_files = [f for f in os.listdir(index_dir) if f.endswith(".index")]
+            st.write("🔍 Found index files:", index_files)  # Debug line
+
             for index_file in index_files:
+                
                 try:
                     index_path = os.path.join(index_dir, index_file)
                     chunk_path = index_path.replace(".index", "_chunks.pkl")

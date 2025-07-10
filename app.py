@@ -300,23 +300,33 @@ if selected_page == "Assistant":
             index_files = [f for f in os.listdir(index_dir) if f.endswith(".index")]
             st.write("🔍 Found index files:", index_files)  # Debug line
 
+
             for index_file in index_files:
-                
                 try:
                     index_path = os.path.join(index_dir, index_file)
                     base_name = index_file.replace(".index", "")
                     chunk_path = os.path.join(index_dir, f"{base_name}_chunks.pkl")
-
-
+            
                     index = faiss.read_index(index_path)
                     with open(chunk_path, "rb") as f:
                         chunks = pickle.load(f)
-
+            
+                    if not chunks:
+                        st.warning(f"⚠️ No chunks found in {chunk_path}")
+                        continue
+            
                     D, I = index.search(q_embed, k=1)
-                    top_context = "\n".join([chunks[i] for i in I[0]])
-                    context += f"\n--- From {index_file} ---\n{top_context}\n"
+                    if I is not None and I[0][0] != -1:
+                        top_context = "\n".join([chunks[i] for i in I[0] if i < len(chunks)])
+                        context += f"\n--- From {index_file} ---\n{top_context}\n"
+                    else:
+                        st.warning(f"⚠️ No matching result found in: {index_file}")
                 except Exception as e:
-                    st.error(f"Error reading {index_file}: {e}")
+                    st.error(f"❌ Error reading {index_file}: {e}")
+
+            if context.strip() == "":
+                st.warning("⚠️ No relevant context found in any index.")
+                st.stop()
 
             prompt = f"""
             User Role: {role_select}

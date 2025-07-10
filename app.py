@@ -2,6 +2,7 @@ import os
 import json
 import base64
 import pickle
+import plotly.express as px
 import faiss
 import pandas as pd
 from datetime import datetime

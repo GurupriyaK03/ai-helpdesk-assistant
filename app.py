@@ -287,7 +287,6 @@ elif selected_page == "Analytics":
     else:
         st.info("No feedback to analyze.")
 
-
 if selected_page == "Assistant":
     st.subheader(" Chat with Assistant")
     user_input = st.text_input("You:", key="user_input")
@@ -296,40 +295,41 @@ if selected_page == "Assistant":
             context = ""
             q_embed = model.encode([user_input], show_progress_bar=False)
 
-            # Search all index files (e.g. hr_policy1.index, manager_rules.index)
             index_files = [f for f in os.listdir(index_dir) if f.endswith(".index")]
-            st.write("🔍 Found index files:", index_files)  # Debug line
+            st.write("🔍 Found index files:", index_files)
 
+            found_any = False  # Track whether any relevant data is found
 
             for index_file in index_files:
                 try:
                     index_path = os.path.join(index_dir, index_file)
                     base_name = index_file.replace(".index", "")
                     chunk_path = os.path.join(index_dir, f"{base_name}_chunks.pkl")
-            
+
                     index = faiss.read_index(index_path)
                     with open(chunk_path, "rb") as f:
                         chunks = pickle.load(f)
-            
+
                     if not chunks:
                         st.warning(f"⚠️ No chunks found in {chunk_path}")
                         continue
-            
+
                     D, I = index.search(q_embed, k=1)
-            
-                    if I is not None and I[0][0] != -1:
+
+                    if I is not None and I[0][0] != -1 and I[0][0] < len(chunks):
                         top_context = "\n".join([chunks[i] for i in I[0] if i < len(chunks)])
                         context += f"\n--- From {index_file} ---\n{top_context}\n"
+                        found_any = True
                     else:
-                        st.warning(f"⚠️ No relevant match found in {index_file}")
+                        st.warning(f"⚠️ No relevant match in {index_file}")
                 except Exception as e:
                     st.error(f"❌ Error reading {index_file}: {e}")
 
-            if context.strip() == "":
-                st.warning("⚠️ No matching content found in indexed documents. Try a broader or different query.")
+            if not found_any or context.strip() == "":
+                st.warning("⚠️ No matching content found in indexed documents. Try another query.")
                 st.stop()
 
-
+            # Send prompt to LLM
             prompt = f"""
             User Role: {role_select}
             Context from all policies:
@@ -341,11 +341,13 @@ if selected_page == "Assistant":
                 answer = query_ollama(prompt)
             st.session_state.chat_history[role_select].append((user_input, answer))
             st.markdown(f"**Assistant:** {answer}")
-        except:
-            st.error("❌ No indexed documents found. Please upload policies.")
+        except Exception as e:
+            st.error(f"❌ Unexpected error: {e}")
 
     if st.session_state.chat_history.get(role_select):
         with st.sidebar.expander(" Chat History"):
             for q, a in st.session_state.chat_history[role_select]:
                 st.markdown(f"**You:** {q}")
                 st.markdown(f"**Assistant:** {a}")
+
+

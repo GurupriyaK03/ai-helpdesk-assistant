@@ -1,15 +1,33 @@
 import requests
-
-# ollama_client.py
 import openai
 import os
 
-openai.api_key = os.getenv("OPENAI_API_KEY")  # or paste it directly (not recommended for public repos)
+# Load your OpenAI API key from Streamlit secrets
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def query_ollama(prompt):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # or "gpt-4" if you have access
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7
-    )
-    return response['choices'][0]['message']['content'].strip()
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Change to "gpt-4" if needed
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
+        return response['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        return f"❌ Error from OpenAI: {str(e)}"
+-3.5-turbo",  # Change to "gpt-4" if needed
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
+        return response['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        return f"❌ Error from OpenAI: {str(e)}"
+

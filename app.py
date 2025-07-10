@@ -304,7 +304,9 @@ if selected_page == "Assistant":
                 
                 try:
                     index_path = os.path.join(index_dir, index_file)
-                    chunk_path = index_path.replace(".index", "_chunks.pkl")
+                    base_name = index_file.replace(".index", "")
+                    chunk_path = os.path.join(index_dir, f"{base_name}_chunks.pkl")
+
 
                     index = faiss.read_index(index_path)
                     with open(chunk_path, "rb") as f:
@@ -314,7 +316,7 @@ if selected_page == "Assistant":
                     top_context = "\n".join([chunks[i] for i in I[0]])
                     context += f"\n--- From {index_file} ---\n{top_context}\n"
                 except Exception as e:
-                    pass  # skip broken index/chunk pair
+                    st.error(f"Error reading {index_file}: {e}")
 
             prompt = f"""
             User Role: {role_select}

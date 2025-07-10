@@ -1,6 +1,12 @@
 streamlit
+plotly
+sentence-transformers
 faiss-cpu
 langchain
+pandas
+PyMuPDF
 PyPDF2
 python-dotenv
 ollama
+
+

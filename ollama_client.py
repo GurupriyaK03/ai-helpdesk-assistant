@@ -1,6 +1,6 @@
 import openai
 import os
-import request
+import requests
 openai.api_key = "your-api-key"  # Set this securely!
 
 def query_ollama(prompt):

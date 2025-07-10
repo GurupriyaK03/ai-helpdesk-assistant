@@ -2,11 +2,9 @@ streamlit
 plotly
 sentence-transformers
 faiss-cpu
-langchain
 pandas
+numpy
+scikit-learn
 PyMuPDF
-PyPDF2
-python-dotenv
 ollama
-
 

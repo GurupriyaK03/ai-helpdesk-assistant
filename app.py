@@ -316,17 +316,19 @@ if selected_page == "Assistant":
                         continue
             
                     D, I = index.search(q_embed, k=1)
+            
                     if I is not None and I[0][0] != -1:
                         top_context = "\n".join([chunks[i] for i in I[0] if i < len(chunks)])
                         context += f"\n--- From {index_file} ---\n{top_context}\n"
                     else:
-                        st.warning(f"⚠️ No matching result found in: {index_file}")
+                        st.warning(f"⚠️ No relevant match found in {index_file}")
                 except Exception as e:
                     st.error(f"❌ Error reading {index_file}: {e}")
 
             if context.strip() == "":
-                st.warning("⚠️ No relevant context found in any index.")
+                st.warning("⚠️ No matching content found in indexed documents. Try a broader or different query.")
                 st.stop()
+
 
             prompt = f"""
             User Role: {role_select}

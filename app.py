@@ -6,7 +6,6 @@ import faiss
 import pandas as pd
 from datetime import datetime
 import streamlit as st
-import plotly.express as px
 from sentence_transformers import SentenceTransformer
 from embedder import embed_and_index
 from ollama_client import query_ollama
